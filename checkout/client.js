@@ -13,7 +13,24 @@ function renderPayPalButton() {
    * that you receive from PayPal
    */
   const options = {
-    /** */
+    //Creating an order with one purchase unit for EUR 12.99.
+    createOrder: function (data, actions) {
+      return actions.order.create({
+        intent: 'AUTHORIZE',
+        purchase_units: [
+          {
+            amount: {
+              value: '12.99',
+              currency: 'EUR',
+            },
+          },
+        ],
+      });
+    },
+    //Before capturing, the transaction should be first authorized on the server side
+    onApprove: function (data, actions) {
+      return onAuthorizeTransaction(data.orderID);
+    },
   };
 
   window.paypal.Buttons(options).render(button);
